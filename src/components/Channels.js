@@ -22,6 +22,7 @@ const SideBarList = styled.ul`
 const paddingLeft = 'padding-left: 10px';
 
 const SideBarListItem = styled.li`
+  padding: 2px;
   ${paddingLeft};
   &:hover {
     background: #3e313c;
