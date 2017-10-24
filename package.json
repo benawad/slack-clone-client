@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "jwt-decode": "^2.2.0",
+    "lodash": "^4.17.4",
     "mobx": "^3.3.1",
     "mobx-react": "^4.3.3",
     "react": "^16.0.0",
