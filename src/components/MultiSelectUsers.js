@@ -9,6 +9,7 @@ const MultiSelectUsers = ({
   value,
   handleChange,
   placeholder,
+  currentUserId,
 }) =>
   (loading ? null : (
     <Dropdown
@@ -19,7 +20,9 @@ const MultiSelectUsers = ({
       multiple
       search
       selection
-      options={getTeamMembers.map(tm => ({ key: tm.id, value: tm.id, text: tm.username }))}
+      options={getTeamMembers
+        .filter(tm => tm.id !== currentUserId)
+        .map(tm => ({ key: tm.id, value: tm.id, text: tm.username }))}
     />
   ));
 
