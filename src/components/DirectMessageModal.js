@@ -4,8 +4,10 @@ import { graphql, compose } from 'react-apollo';
 import { withRouter } from 'react-router-dom';
 import { withFormik } from 'formik';
 import gql from 'graphql-tag';
+import findIndex from 'lodash/findIndex';
 
 import MultiSelectUsers from './MultiSelectUsers';
+import { meQuery } from '../graphql/team';
 
 const DirectMessageModal = ({
   open,
@@ -19,7 +21,7 @@ const DirectMessageModal = ({
   setFieldValue,
 }) => (
   <Modal open={open} onClose={onClose}>
-    <Modal.Header>Add Channel</Modal.Header>
+    <Modal.Header>Direct Messaging</Modal.Header>
     <Modal.Content>
       <Form>
         <Form.Field>
@@ -53,7 +55,10 @@ const DirectMessageModal = ({
 
 const getOrCreateChannelMutation = gql`
   mutation($teamId: Int!, $members: [Int!]!) {
-    getOrCreateChannel(teamId: $teamId, members: $members)
+    getOrCreateChannel(teamId: $teamId, members: $members) {
+      id
+      name
+    }
   }
 `;
 
@@ -62,11 +67,38 @@ export default compose(
   graphql(getOrCreateChannelMutation),
   withFormik({
     mapPropsToValues: () => ({ members: [] }),
-    handleSubmit: async ({ members }, { props: { onClose, teamId, mutate }, setSubmitting }) => {
-      const response = await mutate({ variables: { members, teamId } });
+    handleSubmit: async (
+      { members },
+      {
+        props: {
+          history, onClose, teamId, mutate,
+        }, resetForm, setSubmitting,
+      },
+    ) => {
+      const response = await mutate({
+        variables: { members, teamId },
+        update: (store, { data: { getOrCreateChannel } }) => {
+          const { id, name } = getOrCreateChannel;
+
+          const data = store.readQuery({ query: meQuery });
+          const teamIdx = findIndex(data.me.teams, ['id', teamId]);
+          const notInChannelList = data.me.teams[teamIdx].channels.every(c => c.id !== id);
+
+          if (notInChannelList) {
+            data.me.teams[teamIdx].channels.push({
+              __typename: 'Channel',
+              id,
+              name,
+              dm: true,
+            });
+            store.writeQuery({ query: meQuery, data });
+          }
+          // history.push(`/view-team/${teamId}/${id}`);
+        },
+      });
       console.log(response);
       onClose();
-      setSubmitting(false);
+      resetForm();
     },
   }),
 )(DirectMessageModal);
