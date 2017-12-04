@@ -12,7 +12,7 @@ import MessageContainer from '../containers/MessageContainer';
 import { meQuery } from '../graphql/team';
 
 const ViewTeam = ({ mutate, data: { loading, me }, match: { params: { teamId, channelId } } }) => {
-  if (loading) {
+  if (loading || !me) {
     return null;
   }
 
