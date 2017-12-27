@@ -38,7 +38,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build mv ./build/index.html ./build/200.html",
+    "build":
+      "react-scripts build; mv ./build/index.html ./build/200.html; echo overt-health.surge.sh > build/CNAME",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint src"
