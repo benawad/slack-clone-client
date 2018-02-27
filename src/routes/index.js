@@ -1,12 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import decode from 'jwt-decode';
-
-import Home from './Home';
-import Register from './Register';
-import Login from './Login';
-import CreateTeam from './CreateTeam';
-import ViewTeam from './ViewTeam';
+import Loadable from 'react-loadable';
 
 const isAuthenticated = () => {
   const token = localStorage.getItem('token');
@@ -41,14 +36,37 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   />
 );
 
+const Loading = () => <div>...loading</div>;
+
+const AsyncHome = Loadable({
+  loader: () => import('./Home'),
+  loading: Loading,
+});
+const AsyncRegister = Loadable({
+  loader: () => import('./Register'),
+  loading: Loading,
+});
+const AsyncLogin = Loadable({
+  loader: () => import('./Login'),
+  loading: Loading,
+});
+const AsyncViewTeam = Loadable({
+  loader: () => import('./ViewTeam'),
+  loading: Loading,
+});
+const AsyncCreateTeam = Loadable({
+  loader: () => import('./CreateTeam'),
+  loading: Loading,
+});
+
 export default () => (
   <BrowserRouter>
     <Switch>
-      <Route path="/" exact component={Home} />
-      <Route path="/register" exact component={Register} />
-      <Route path="/login" exact component={Login} />
-      <PrivateRoute path="/view-team/:teamId?/:channelId?" exact component={ViewTeam} />
-      <PrivateRoute path="/create-team" exact component={CreateTeam} />
+      <Route path="/" exact component={AsyncHome} />
+      <Route path="/register" exact component={AsyncRegister} />
+      <Route path="/login" exact component={AsyncLogin} />
+      <PrivateRoute path="/view-team/:teamId?/:channelId?" exact component={AsyncViewTeam} />
+      <PrivateRoute path="/create-team" exact component={AsyncCreateTeam} />
     </Switch>
   </BrowserRouter>
 );
