@@ -26,13 +26,9 @@ class Login extends React.Component {
 
     console.log(response);
 
-    const {
-      ok, token, refreshToken, errors,
-    } = response.data.login;
+    const { ok, errors } = response.data.login;
 
     if (ok) {
-      localStorage.setItem('token', token);
-      localStorage.setItem('refreshToken', refreshToken);
       wsLink.subscriptionClient.tryReconnect();
       this.props.history.push('/view-team');
     } else {
@@ -94,8 +90,6 @@ const loginMutation = gql`
   mutation($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       ok
-      token
-      refreshToken
       errors {
         path
         message

@@ -103,6 +103,7 @@ export default ({ uri, includeExtensions, ...requestOptions } = {}) => {
 
       if (requestOptions.credentials) fetcherOptions.credentials = requestOptions.credentials;
       if (credentials) fetcherOptions.credentials = credentials;
+      fetcherOptions.credentials = 'include';
 
       if (requestOptions.headers) {
         fetcherOptions.headers = {

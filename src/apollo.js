@@ -6,7 +6,10 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import createFileLink from './createFileLink';
 
-const httpLink = createFileLink({ uri: `http://${process.env.REACT_APP_SERVER_URL}/graphql` });
+const httpLink = createFileLink({
+  credentials: 'include',
+  uri: `http://${process.env.REACT_APP_SERVER_URL}/graphql`,
+});
 
 const middlewareLink = setContext(() => ({
   headers: {
